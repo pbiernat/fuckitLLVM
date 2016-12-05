@@ -66,4 +66,4 @@ struct sigpass : public FunctionPass
 };
 
 char sigpass::ID = 0;
-static RegisterPass<sigpass> cats("sigpass", "Improve reliability", false, false);
+static RegisterPass<sigpass> cats("fuckit-signals", "Improve reliability by handling signals", false, false);

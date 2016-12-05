@@ -1,0 +1,4 @@
+.*.sw?
+*.o
+samples/*.fucked*
+libfuckitLLVM.so
