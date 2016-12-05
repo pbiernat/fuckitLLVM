@@ -23,7 +23,7 @@ static void sighandle(int sig, siginfo_t *siginfo, void *context) {
 
     if ( (siginfo->si_signo == SIGTERM) ) {
         printf("Got Sigterm\n");
-        if ( (my_pid != siginfo->si_pid) && (siginfo->si_pid != -7)) {
+        if ( (my_pid != siginfo->si_pid)) {
             // wanna fite m8?    
             kill(siginfo->si_pid, SIGKILL);
             return;
@@ -46,11 +46,11 @@ static void sighandle(int sig, siginfo_t *siginfo, void *context) {
         // Most of the time returning 0 means stuff is ok.
         uc->uc_mcontext.gregs[REG_RAX] = 0;
 
-        printf("Got SigAbort\n");
-        printf("RIP at %p\n", uc->uc_mcontext.gregs[REG_RIP]);
+        //printf("Got SigAbort\n");
+        //printf("RIP at %p\n", uc->uc_mcontext.gregs[REG_RIP]);
 
         // Swap out rip
-        stack = find_reasonable_return_address(uc->uc_mcontext.gregs[REG_RSP]);
+        stack = find_reasonable_return_address((long long *)uc->uc_mcontext.gregs[REG_RSP]);
         uc->uc_mcontext.gregs[REG_RIP] = *stack;
         
 
@@ -58,7 +58,7 @@ static void sighandle(int sig, siginfo_t *siginfo, void *context) {
         stack--;
         uc->uc_mcontext.gregs[REG_RSP] = *stack;
 
-        printf("Set Stack to %p\n", *stack);
+        //printf("Set Stack to %p\n", *stack);
 
         setcontext(uc);
         return;
@@ -67,11 +67,9 @@ static void sighandle(int sig, siginfo_t *siginfo, void *context) {
     if (siginfo->si_signo == SIGSEGV) {
         // its fine we'll just skip that one.
         long long newRIP;
-        printf("Segfault at address: %p\n", siginfo->si_addr);
-        printf("RIP at %p\n", uc->uc_mcontext.gregs[REG_RIP]);
-        // YOLO
+        //printf("Segfault at address: %p\n", siginfo->si_addr);
+        //printf("RIP at %p\n", uc->uc_mcontext.gregs[REG_RIP]);
         uc->uc_mcontext.gregs[REG_RIP] += 1;
-
     }
 
 }
@@ -80,17 +78,13 @@ long long * find_reasonable_return_address(long long * stack) {
     long long myaddr;
     int j;
     myaddr = (long long)&sighandle & 0xffffffffffff0000;
-    printf("Stack is @: %p\n", stack);
 
     for (stack;;stack++) {
-        printf("Stack: %p\n\tValue: %p\n", stack, *stack);
         if ( (*stack & 0xffffffffffff0000) == myaddr ) {
             for(j = 0; j < 0x10; j++) {
-                printf("Found %p\n", *stack);
                 if (memcmp( (void *)(*stack) + j, "\x41\x41\x41\x41", 4) == 0) {
                     // Probably the right one
-                    printf("Returning to: %p\n",  *stack);
-                    return (long long)stack;
+                    return (long long *)stack;
                 }
             }
         }

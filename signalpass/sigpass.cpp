@@ -17,8 +17,6 @@ struct sigpass : public FunctionPass
                                         NULL);
        
         IRBuilder<> builder(F->getEntryBlock().getFirstNonPHI());
-        //builder.SetInsertPoint(F->getEntryBlock(), ++builder.GetInsertPoint());
-        Value * args[] = {0};
         builder.CreateCall(sigFunc);
 
         errs() << "Created Builder!\n";
@@ -26,8 +24,6 @@ struct sigpass : public FunctionPass
     }
 
     int insert_callmarkers(Function * F) {
-        Value * junk1 = llvm::ConstantInt::get(F->getContext(), llvm::APInt(64, 0x31337, false));
-        Value * junk2 = llvm::ConstantInt::get(F->getContext(), llvm::APInt(64, 0, false));
 
         for (Function::iterator bb=F->begin(), bb_end=F->end(); bb != bb_end; ++bb) {
             for (BasicBlock::iterator inst=bb->begin(), end=bb->end(); inst != end; ++inst) {
@@ -40,8 +36,6 @@ struct sigpass : public FunctionPass
                     Constant* beginConstAddress = ConstantInt::get(Type::getInt64Ty(F->getContext()), (int64_t)0x41414141);
                     Value* ConstPtr = ConstantExpr::getIntToPtr(
                     beginConstAddress , PointerType::getUnqual(Type::getInt64Ty(F->getContext()))); 
-
-
 
                     Value * lol = builder.CreateLoad(ConstPtr);
                     builder.CreateStore(lol, ConstPtr);
