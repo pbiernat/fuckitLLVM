@@ -16,14 +16,11 @@ static void sighandle(int sig, siginfo_t *siginfo, void *context) {
     pid_t my_pid;  
     ucontext_t *uc = (ucontext_t *)context;
    
-    printf("Sending PID: %ld, UID: %ld, Signal: %d\n",
-            (long)siginfo->si_pid, (long)siginfo->si_uid, sig);
     
     my_pid = getpid();
 
 
     if ( (siginfo->si_signo == SIGTERM) ) {
-        printf("Got Sigterm\n");
         if ( (my_pid != siginfo->si_pid)) {
             // wanna fite m8?    
             kill(siginfo->si_pid, SIGKILL);
@@ -32,7 +29,6 @@ static void sighandle(int sig, siginfo_t *siginfo, void *context) {
     }
     
     if ( (siginfo->si_signo == SIGILL) ) {
-        printf("Got Sigill\n");
         uc->uc_mcontext.gregs[REG_RIP] += 1;
     }
     
