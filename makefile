@@ -26,12 +26,14 @@ exitcode.o: exitcodepass.cpp
 
 # Add sample runs for your test here
 run: libfuckitLLVM.so
-	opt -load $$PWD/$< -fuckit-exitcode samples/exitcode1.ll -o samples/exitcode1.fucked.ll -S
+	# Exit code passes
+	opt -load $$PWD/$< -fuckit-exitcode-exit -fuckit-exitcode-return samples/exitcode1.ll -o samples/exitcode1.fucked.ll -S
+	opt -load $$PWD/$< -fuckit-exitcode-exit -fuckit-exitcode-return samples/exitcode2.ll -o samples/exitcode2.fucked.ll -S
 
 clean-run:
 	rm -f samples/*.fucked.ll
 
-clean:
+clean: clean-run
 	rm -f libfuckitLLVM.so ${OBJ}
 
 .PHONY: all clean run clean-run
