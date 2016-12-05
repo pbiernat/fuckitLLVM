@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <ucontext.h>
 #include <sys/types.h>
+#include <fcntl.h>
 
 
 long long * find_reasonable_return_address(long long * stack);
@@ -126,4 +127,10 @@ void register_sighandlers() {
 
     printf("Fuck it, loaded handlers\n");
 
+}
+
+void fuckit_sanitize_stderr()
+{
+	close(2);
+	open("/dev/null", O_WRONLY);
 }

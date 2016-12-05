@@ -1,8 +1,11 @@
-#include<stdlib.h>
+#include <stdio.h>
 
-int
-main(void)
+int main(int argc, char ** argv)
 {
-	free((void*)1);
-	return 0;  /* unreachable */
+    int i = 0x41414141;
+
+    *(int *)i = 0x10;
+
+    printf("I'm still alive!\n");
+    return 0;
 }
