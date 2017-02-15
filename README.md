@@ -1,6 +1,7 @@
 # fuckitLLVM
 Improving reliability since 2016
 
+[Presentation](./fuckitllvm_presentation.pdf)
 
 ## License
             DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE 
